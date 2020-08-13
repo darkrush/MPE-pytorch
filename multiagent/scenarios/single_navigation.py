@@ -13,7 +13,6 @@ class Scenario(BaseScenario):
         world.step_unknown = args.step_unknown
         world.unknown_decay = args.unknown_decay
         world.decay_episode = args.decay_episode
-        world.critic_full_obs = args.critic_full_obs
         world.num_reset = 0
         # add agents
         world.agents = [Agent() for i in range(world.num_agents)]
@@ -96,7 +95,7 @@ class Scenario(BaseScenario):
                     rew -= 1
         return rew
 
-    def observation(self, agent, world, critic_full_obs):
+    def observation(self, agent, world):
         # get positions of all entities in this agent's reference frame
         entity_pos = []
         for entity in world.landmarks:  # world.entities:
@@ -113,28 +112,12 @@ class Scenario(BaseScenario):
 
         # index
         index = np.zeros(world.num_landmarks)
-        if critic_full_obs:
-            # actor
-            if world.world_step > world.step_unknown:
-                index = np.zeros(world.num_landmarks)
-            else:
-                index = np.zeros(world.num_landmarks)
-                index[world.select_goal] = 1
-            # critic
-            index_critic = np.zeros(world.num_landmarks)
-            index_critic[world.select_goal] = 1
-            
-            all_obs = np.append(index, stable_obs)
-            all_obs_critic = np.append(index_critic, stable_obs)
-            
-            return all_obs, all_obs_critic       
+        if world.world_step > world.step_unknown:
+            index = np.zeros(world.num_landmarks)
         else:
-            if world.world_step > world.step_unknown:
-                index = np.zeros(world.num_landmarks)
-            else:
-                index = np.zeros(world.num_landmarks)
-                index[world.select_goal] = 1
-                            
-            all_obs = np.append(index, stable_obs)
+            index = np.zeros(world.num_landmarks)
+            index[world.select_goal] = 1
+                        
+        all_obs = np.append(index, stable_obs)
     
-            return all_obs
+        return all_obs
