@@ -191,7 +191,6 @@ class MultiAgentEnv(gym.Env):
             # physical action
             if self.discrete_action_input:
                 agent.action.u = np.zeros(self.world.dim_p)
-                print(action)
                 # process discrete action
                 if action[0] == 1: agent.action.u[0] = -1.0
                 if action[0] == 2: agent.action.u[0] = +1.0
