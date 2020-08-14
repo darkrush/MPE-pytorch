@@ -40,7 +40,7 @@ class MultiAgentEnv(gym.Env):
 
 
         # if true, action is a number 0...N, otherwise action is a one-hot N-dimensional vector
-        self.discrete_action_input = False
+        self.discrete_action_input = True
         # if true, even the action is continuous, action will be performed discretely
         self.force_discrete_action = world.discrete_action if hasattr(world, 'discrete_action') else False
         # in this env, force_discrete_action == False��because world do not have discrete_action
@@ -191,6 +191,7 @@ class MultiAgentEnv(gym.Env):
             # physical action
             if self.discrete_action_input:
                 agent.action.u = np.zeros(self.world.dim_p)
+                print(action)
                 # process discrete action
                 if action[0] == 1: agent.action.u[0] = -1.0
                 if action[0] == 2: agent.action.u[0] = +1.0
@@ -466,7 +467,7 @@ class BatchMultiAgentEnv(gym.Env):
         return obs_n
 
     # render environment
-    def render(self, mode='human', close=True):
+    def render(self, mode='human', close=False):
     # def _render(self, mode='human', close=True):
         results_n = []
         for env in self.env_batch:
