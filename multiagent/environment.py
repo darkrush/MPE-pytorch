@@ -84,8 +84,16 @@ class MultiAgentEnv(gym.Env):
             else:
                 self.action_space.append(total_action_space[0])
             # observation space
-            obs_dim = len(observation_callback(agent, self.world))
-            self.observation_space.append(spaces.Box(low=-np.inf, high=+np.inf, shape=(obs_dim,), dtype=np.float32))#[-inf,inf]
+            obs_temp = observation_callback(agent, self.world)
+            if isinstance(obs_temp,tuple):
+                obs_dim = len(obs_temp[0])
+                global_dim = len(obs_temp[1])
+                p_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(obs_dim,), dtype=np.float32)
+                g_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(global_dim,), dtype=np.float32)
+                self.observation_space.append([p_space,g_space])
+            else:
+                obs_dim = len(obs_temp)
+                self.observation_space.append(spaces.Box(low=-np.inf, high=+np.inf, shape=(obs_dim,), dtype=np.float32))#[-inf,inf]
             agent.action.c = np.zeros(self.world.dim_c)
 
         # rendering
